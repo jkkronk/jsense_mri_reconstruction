@@ -4,7 +4,7 @@ This repository is an simple implementation of JSENSE MRI reconstruction using n
 [Link to original paper](https://onlinelibrary.wiley.com/doi/full/10.1002/mrm.21245)
 
 ## Dependencies and Installation
-Written for Python 3.8.5
+Written for Python 3.8.5. [Sigpy](https://sigpy.readthedocs.io/en/latest/index.html) is used for Espirit estimation of initial sensitivity maps, and for comparable baseline. 
 
 ```bash
 pip install -r requirements.txt
