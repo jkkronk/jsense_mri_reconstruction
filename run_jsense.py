@@ -11,9 +11,9 @@ if __name__ == "__main__":
   parser = argparse.ArgumentParser(prog='PROG')
   parser.add_argument('--path', type=str, default='data/testdata.h5', help='Full path to h5 file for reconstruction') 
   parser.add_argument('--slice', type=int, default=0, help='Slice to reconstruct, 0 = all slices (default: 0)')
-  parser.add_argument('--usfact', type=int, default=3, help='Undersampling factor (default: 3)')
+  parser.add_argument('--usfact', type=int, default=4, help='Undersampling factor (default: 4)')
   parser.add_argument('--basis_order', type=int, default=8, help='Polynomial basis max order (default: 8)')
-  parser.add_argument('--num_iter', type=int, default=50, help='Number of iterations (default: 500)')
+  parser.add_argument('--num_iter', type=int, default=30, help='Number of iterations (default: 50)')
 
   args = parser.parse_args()
   path = args.path
@@ -37,7 +37,7 @@ if __name__ == "__main__":
   
   # Create and apply US pattern
   us_pat, num_low_freqs = generate_US_pattern(ksp_sli.shape, R=R) 
-  us_ksp = us_pat * ksp_sli mask
+  us_ksp = us_pat * ksp_sli
 
   # Estimate initial sensemaps using Espirit 
   est_sensemap = np.fft.fftshift(mr.app.EspiritCalib(us_ksp, 
