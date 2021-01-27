@@ -42,7 +42,7 @@ if __name__ == "__main__":
   # Estimate initial sensemaps using Espirit 
   est_sensemap = np.fft.fftshift(mr.app.EspiritCalib(us_ksp, 
     calib_width=num_low_freqs, thresh=0.02, kernel_width=6, crop=0.01, max_iter=100, 
-    show_pbar=False, device=0).run().get(),axes=(1, 2))
+    show_pbar=False).run(),axes=(1, 2))
 
   # Initializing image reconstruction
   recs = np.zeros((num_iter, rows, cols), dtype=complex)
