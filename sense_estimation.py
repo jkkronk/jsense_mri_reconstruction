@@ -63,7 +63,7 @@ def sense_estimation_ls(Y, X, basis_funct, uspat):
     for i in range(num_coils):
         Y_i = Y[i].reshape(sizex*sizey)
         A_i = (uspat[i, np.newaxis] * np.fft.fftshift(np.fft.fft2(basis_funct[:,:,:] * X[np.newaxis, :, :], axes=(1, 2)), axes=(1, 2))).reshape(num_coeffs, sizex*sizey)
-        coeff_coils[i,:] = np.matmul(np.matmul(Y_i, np.transpose(A_i)), np.linalg.inv(np.matmul(A_i, np.transpose(A_i))))
+        coeff_coils[i,:] = np.matmul(np.matmul(Y_i, np.transpose(np.conjugate(A_i))), np.linalg.inv(np.matmul(A_i, np.transpose(np.conjugate(A_i)))))
 
     return coeff_coils
 
