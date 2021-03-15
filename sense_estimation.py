@@ -68,6 +68,76 @@ def sense_estimation_ls(Y, X, basis_funct, uspat):
     return coeff_coils
 
 
+# Pytorch implementation
+
+def complex_inverse(ctensor, ntry=5) -> "ComplexTensor":
+    # Code from https://github.com/kamo-naoyuki/pytorch_complex/blob/b6f82d076f8e6ad035e8573a007c467391d646ff/torch_complex/tensor.py
+    # m x n x n
+    in_size = ctensor.size()
+    a = ctensor.view(-1, ctensor.size(-1), ctensor.size(-1))
+    # see "The Matrix Cookbook" (http://www2.imm.dtu.dk/pubdb/p.php?3274)
+    # "Section 4.3"
+    for i in range(ntry):
+        t = i * 0.1
+
+        e = a.real + t * a.imag
+        f = a.imag - t * a.real
+
+        try:
+            x = torch.matmul(f, e.inverse())
+            z = (e + torch.matmul(x, f)).inverse()
+        except Exception:
+            if i == ntry - 1:
+                raise
+            continue
+
+        if t != 0.0:
+            eye = torch.eye(
+                a.real.size(-1), dtype=a.real.dtype, device=a.real.device
+            )[None]
+            o_real = torch.matmul(z, (eye - t * x))
+            o_imag = -torch.matmul(z, (t * eye + x))
+        else:
+            o_real = z
+            o_imag = -torch.matmul(z, x)
+
+        o = torch.complex(o_real, o_imag, device=a.real.device)
+        return o.view(*in_size)
+
+def pytorch_UFT(x, uspat, sensmaps):
+    # inp: [nx, ny], [nx, ny]
+    # out: [nx, ny, ns]
+    return uspat[:, :].unsqueeze(0) * fftshift(torch.fft.fftn(sensmaps * x[:, :].unsqueeze(0), dim=(1, 2)), dim=(1, 2))
+
+def pytorch_sense_estimation_ls(Y, X, basis_funct, uspat, device):
+    """
+    Estimation the sensitivity maps for MRI Reconstruction using polynomial basis functions. Implemented with pytorch and GPU accelerated Least squares solution. 
+    :param data: y (undersampled kspace) [c x n x m]
+    :param X: predicted reconstruction estimate [c x n x m]
+    :param max_basis_order:
+    :return coefficients: Least squares coefficients for basis functions
+    """
+
+    Y = torch.from_numpy(Y).to(device)
+    X = torch.from_numpy(X).to(device)
+    basis_funct = torch.from_numpy(basis_funct).to(device)
+    uspat = torch.from_numpy(uspat).to(device)
+
+    num_coils, sizex, sizey = y.shape
+    num_coeffs = basis_funct.shape[1]
+
+    coeff_coils = torch.zeros((num_coils, num_coeffs), dtype=torch.cfloat, device=y.real.device)
+    # XA - Y = 0
+    for i in range(num_coils):
+        Y = y[i,:,:].reshape(sizex*sizey) 
+        A = pytorch_UFT(X, uspat, basis_funct[i,:,:,:]).reshape(num_coeffs, sizex*sizey) 
+        coeff = torch.matmul(torch.matmul(Y, torch.transpose(torch.conj(A), 0, 1)), complex_inverse(torch.matmul(A, torch.transpose(torch.conj(A), 0, 1))))
+        coeff_coils[i,:] = coeff
+
+    return coeff_coils.detach().cpu().numpy()
+
+
+
 
 
 
