@@ -5,6 +5,8 @@ This repository is a simple implementation of JSENSE MRI reconstruction using nu
 
 The test image is undersampled and reconstruction in 'run_jsense.py' and initialisation of polynomial basis function together with least squares solution to reconstruct the sensitivity maps are located in 'sense_estimation.py'.
 
+Pytorch implementation in 'sense_estimation.py'. Not tested yet.
+
 ## Dependencies and Installation
 Written for Python 3.8.5. [Sigpy](https://sigpy.readthedocs.io/en/latest/index.html) is used for Espirit estimation of initial sensitivity maps, and for comparable baseline. 
 
