@@ -26,4 +26,5 @@ python run_jsense.py
 Example data is from FastMRI dataset found [here](https://fastmri.org/). Brain MRI aquired in flair axial view.
 
 ## Other
+WIP, not fully tested.
 Feel free to reach out to jonatank@ee.ethz.ch for any questions.
