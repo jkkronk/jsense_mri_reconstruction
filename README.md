@@ -27,4 +27,4 @@ Example data is from FastMRI dataset found [here](https://fastmri.org/). Brain M
 
 ## Other
 WIP, not fully tested.
-Feel free to reach out to jonatank@ee.ethz.ch for any questions.
+Feel free to reach out for any questions.
